@@ -1,0 +1,27 @@
+body{
+    background-color: #E7E8E3;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#input_nova_tarefa{
+    border-radius: 15px;
+    padding: 0.375rem 0.75rem;
+    border-color: #E7E8E3;
+    
+}
+
+button{
+    color: white;
+    background-color: #61A1FE;
+    border-color: #61A1FE;
+    border-radius: 0.25rem;
+    opacity: 0.8;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+#lista_de_tarefas{
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
