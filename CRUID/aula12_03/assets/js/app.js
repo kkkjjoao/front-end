@@ -15,10 +15,10 @@ function validaSeExisteTarefasNoLocalStorageEMostraNaTela() {
         });
     }
     // Carregar e aplicar configurações de ocultar/mostrar
-    if (localStorage.getItem('configuracoes') != null) {
+    if (localStorage.getItem('oculto') != null) {
         // Verifica se existem configurações salvas no localStorage
-        const configuracoes = JSON.parse(localStorage.getItem('configuracoes'));
-        if (configuracoes.ocultar) {
+        const oculto = JSON.parse(localStorage.getItem('oculto'));
+        if (oculto.ocultar) {
             // Se a configuração indicar que as tarefas devem ser ocultadas, chama a função ocultarTarefa()
             ocultarTarefa();
         }
@@ -32,12 +32,11 @@ function adicionaTarefaNaLista(){
     const novaTarefa = document.getElementById('input_nova_tarefa').value
 
     if (novaTarefa.trim() !== '') {
-        criaNovoItemDaLista(novaTarefa)
-        document.getElementById('input_nova_tarefa').value = ''
+        criaNovoItemDaLista(novaTarefa);
+        document.getElementById('input_nova_tarefa').value = ''; 
     }else{
-       alert("Digite uma tarefa")
+       alert("Digite uma tarefa");
     }
-
 }
 
 function criaNovoItemDaLista(textoDaTarefa){
@@ -56,8 +55,8 @@ function criaNovoItemDaLista(textoDaTarefa){
 
     // doubleclick para edit
     novoItem.addEventListener('dblclick', function(){
-        editarTarefa(novoItem)
-    })
+        editarTarefa(novoItem);
+    });
 
     novoItem.appendChild(criaInputCheckBoxTarefa(novoItem.id))
 
@@ -65,8 +64,7 @@ function criaNovoItemDaLista(textoDaTarefa){
 
     const tarefa = montaTarefa(novoItem.id, novoItem.innerText, 'aberta')
     adicionaTarefaAListaLocalStorage(tarefa)
-  
-    
+
 }
 
 function criaInputCheckBoxTarefa(idTarefa, status) {
@@ -109,117 +107,78 @@ function editarTarefa(novoItem) {
 
     // Substitui o texto original da tarefa pelo novo input
     textoItem.replaceWith(novoInput)
-     
         
 }
 
-function editarTarefa(itemLista) {
-    // Acessa o primeiro elemento de lista
-    const textoItem = itemLista.firstChild
 
-    // Cria um novo elemento 
-    const novoInput = document.createElement('input')
-    novoInput.type = 'text'
-    // Define o valor do novo input como o texto da tarefa
-    novoInput.value = textoItem.textContent
 
-    // Adiciona um ouvinte de evento de 'blur' ao novo input
-    // O evento 'blur' ocorre quando o elemento perde o foco
-    novoInput.addEventListener('blur', () => salvaEdicao(itemLista, novoInput))
-
-    // Substitui o texto original da tarefa pelo novo input
-    textoItem.replaceWith(novoInput)
-}
-
-function salvaEdicao(itemLista, novoInput) {
-    // Obtém o valor do novo input
+function salvaEdicao(novoInput) {    
+// Obtém o valor do novo input
     const novoTexto = novoInput.value
 
-    // Cria um novo elemento span para armazenar o novo textoda tarefa
-    const textoItem = document.createElement('span')
-    textoItem.textContent = novoTexto
-
     // Verifica se o novo texto da tarefa não está vazio
-    if (textoItem.textContent.trim() !== '') {
+    if (novoTexto.trim() !== '') {
+    // Cria um novo elemento span para armazenar o novo texto da tarefa
+        const textoItem = document.createElement('span')
+        textoItem.textContent = novoTexto 
         // Substitui o novo input pelo novo elemento span
         novoInput.replaceWith(textoItem)
+
+        //obtem id da tarefa a ser editada
+        const idTarefa = textoItem.parentNode.id
+
+        //muda descrição d tarefa no localStorage
+        mudaDescricaoTarefaLocalStorage(idTarefa, novoTexto)
     } else {
-        // Exibe um alerta solicitando ao usuário que digite uma tarefa
+    // Exibe um alerta solicitando ao usuário que digite uma tarefa
         alert('Digite uma tarefa')
     }
+         
 }
 
-//function salvaEdicao(novoInput) {
-    
-    //// Obtém o valor do novo input
-  //  const novoTexto = novoInput.value
+function mudaDescricaoTarefaLocalStorage(idTarefa, novoTexto){
+  const localStorage = window.localStorage
+    if (localStorage.getItem('lista_tarefas') != null) {
+    //obtem lista de tarefas do localStorage
+        const listaTarefas = JSON.parse(window.localStorage.getItem('lista_tarefas')) || []
 
-    //// Verifica se o novo texto da tarefa não está vazio
-    //if (novoTexto.trim() !== '') {
-        //// Cria um novo elemento span para armazenar o novo texto da tarefa
-      //  const textoItem = document.createElement('span')
-        //textoItem.textContent = novoTexto 
-        //// Substitui o novo input pelo novo elemento span
-        //novoInput.replaceWith(textoItem)
-
-        ////obtem id da tarefa a ser editada
-        //const idTarefa = textoItem.parentNode.id
-
-        ////muda descrição d tarefa no localStorage
-        //mudaDescricaoTarefaLocalStorage(idTarefa, novoTexto)
-    //} else {
-        //// Exibe um alerta solicitando ao usuário que digite uma tarefa
-        //alert('Digite uma tarefa')
-    //}
-        //// Atualizar no localStorage
-      
-//}
-
-//function mudaDescricaoTarefaLocalStorage(idTarefa, novoTexto){
-  //  const localStorage = window.localStorage
-    //if (localStorage.getItem('lista_tarefas') != null) {
-      //  let cont=0
-        ////obtem lista de tarefas do localStorage
-        //const listaTarefas = JSON.parse(window.localStorage.getItem('lista_Tarefas')) || []
-
-        ////procura tarefa na lista e muda sua descrição
-       // listaTarefas.forEach(tarefa=>{
-            //if(tarefa.id===idTarefa){
-            //    tarefa.descricao = novoTexto
-          //  }
-        //})
-        ////salva lista atualizada na lista e atualiza sua descrição
-      //  localStorage.setItem('lista_tarefas', JSON.stringify(listaTarefas))
-    //    contador++
-  //  }
-//}
+        //procura tarefa na lista e muda sua descrição
+        listaTarefas.forEach(tarefa=>{
+            if(tarefa.id===idTarefa){
+                tarefa.descricao = novoTexto
+            }
+        })
+        //salva lista atualizada na lista e atualiza sua descrição
+        localStorage.setItem('lista_tarefas', JSON.stringify(listaTarefas))
+    }
+}
 
 
 function ocultarTarefa() {
     // Seleciona todos os checkboxes no documento
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     // Itera sobre cada checkbox
     checkboxes.forEach(function(checkbox) {
         // Verifica se o checkbox está marcado
         if (checkbox.checked) {
-                checkbox.parentNode.style.display = 'none'
+                checkbox.parentNode.style.display = 'none';
         }
-    })
-    salvarConfiguracoesNoLocalStorage({ ocultar: true })
+    });
+    salvarConfiguracoesNoLocalStorage({ ocultar: true });
 }
 
 function desocultarTarefa(){
      // Seleciona todos os checkboxes no documento
-     const fdp = document.querySelectorAll('input[type="checkbox"]')
+     const fdp = document.querySelectorAll('input[type="checkbox"]');
      // Itera sobre cada checkbox
      fdp.forEach(function(fds) {
          // Verifica se o checkbox está marcado
          if (fds.checked) {
-                 fds.parentNode.style.display = 'list-item'
+                 fds.parentNode.style.display = 'list-item';
          }
-     })
+     });
          // Atualizar no localStorage
-         salvarConfiguracoesNoLocalStorage({ ocultar: false })
+         salvarConfiguracoesNoLocalStorage({ ocultar: false });
 }
 
 
@@ -239,15 +198,15 @@ function mudaEstadoTarefaLocalStorage(idTarefa) {
             }
             localStorage.setItem('lista_tarefas', JSON.stringify(listaTarefas))
             contador++
-        })
+        });
 
     }
 }
 
-function salvarConfiguracoesNoLocalStorage(configuracoes) {
+function salvarConfiguracoesNoLocalStorage(oculto) {
     // Salva as configurações no localStorage
-    const localStorage = window.localStorage
-    localStorage.setItem('configuracoes', JSON.stringify(configuracoes))
+    const localStorage = window.localStorage;
+    localStorage.setItem('oculto', JSON.stringify(oculto));
 }
 
 function adicionaTarefaAListaLocalStorage(tarefa) {
